@@ -25,7 +25,7 @@ const Login = () => {
     setError('')
     try {
 
-      const response = await axios.post(`http://localhost:5000/api/users/login`, userData)
+      const response = await axios.post(`https://mernblog-ypmi.onrender.com/api/users/login`, userData)
       const user = await response.data;
       setCurrentUser(user)
       navigate('/')
@@ -45,7 +45,7 @@ const Login = () => {
           <input type="password" placeholder='Password' name='password' value={userData.password} onChange={changeInputHandler} />
           <button className='btn primary'>Login</button>
         </form>
-        <small>Don't have an account?<Link to='/login'> Sign Up</Link></small>
+        <small>Don't have an account?<Link to='/register'> Sign Up</Link></small>
         <small><Link to='/forgot-password'>Forgot Password</Link></small>
       </div>
     </section>

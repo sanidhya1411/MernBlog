@@ -24,7 +24,7 @@ const Register = () => {
     e.preventDefault()
     setError('')
     try {
-      const response = await axios.post(`http://localhost:5000/api/users/register`, userData)
+      const response = await axios.post(`https://mernblog-ypmi.onrender.com/api/users/register`, userData)
       const newUser = await response.data
       console.log(newUser)
       if (!newUser) {

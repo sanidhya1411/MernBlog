@@ -12,7 +12,7 @@ const Authors = () => {
       const getAuthors = async () => {
           setIsLoading(true)
           try {
-              const response = await axios.get(`http://localhost:5000/api/users`)
+              const response = await axios.get(`https://mernblog-ypmi.onrender.com/api/users`)
               setAuthors(response?.data)
           }
           catch (err) {

@@ -36,7 +36,7 @@ const CreatePost = () => {
     postData.set('thumbnail', thumbnail)
     
     try {
-      const response = await axios.post(`http://localhost:5000/api/posts/`, postData, { withCredentials: true, headers: { Authorization: `Bearer ${token}` } })
+      const response = await axios.post(`https://mernblog-ypmi.onrender.com/api/posts/`, postData, { withCredentials: true, headers: { Authorization: `Bearer ${token}` } })
       if (response.status == 201) {
         return navigate('/')
       }

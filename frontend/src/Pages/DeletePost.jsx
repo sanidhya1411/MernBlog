@@ -21,7 +21,7 @@ const DeletePost = ({postId}) => {
   const removePost = async (id) => {
     setIsloading(true)
     try {
-      const response = await axios.delete(`http://localhost:5000/api/posts/${id}`, { withCredentials: true, headers: { Authorization: `Bearer ${token}` } })
+      const response = await axios.delete(`https://mernblog-ypmi.onrender.com/api/posts/${id}`, { withCredentials: true, headers: { Authorization: `Bearer ${token}` } })
       if (response.status == 200) {
         if (location.pathname == `/myposts/${currentUser.id}`) {
           navigate(0)

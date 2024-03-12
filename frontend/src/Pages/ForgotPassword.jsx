@@ -20,7 +20,7 @@ const ForgotPassword = () => {
     e.preventDefault()
     setError('')
     try {
-      const response = await axios.patch(`http://localhost:5000/api/users/forgotPassword`, userData)
+      const response = await axios.patch(`https://mernblog-ypmi.onrender.com/api/users/forgotPassword`, userData)
       navigate('/login')
 
     }
