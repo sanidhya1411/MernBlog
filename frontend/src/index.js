@@ -20,6 +20,9 @@ import Authors from './Pages/Authors';
 import UserProfile from './Pages/UserProfile';
 import UserProvider from './context/userContext';
 import ForgotPassword from './Pages/ForgotPassword';
+import ResetPassword from './Pages/ResetPassword';
+import { ToastContainer} from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -42,7 +45,8 @@ const router = createBrowserRouter([
       { path: 'posts/categories/:category', element: <CategoryPosts /> },
       { path: 'logout', element: <Logout /> },
       { path: 'posts/users/:id', element: <AuthorPosts /> },
-      { path: 'forgot-password', element: <ForgotPassword/> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'reset-password/:token', element: <ResetPassword/> },
       
     ]
   },
@@ -51,6 +55,7 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={ router} />
+    <RouterProvider router={router} />
+    <ToastContainer position="top-center" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClickrtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored"/>
   </React.StrictMode>
 );

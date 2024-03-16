@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect, useRef } from "react";
 
 export const UserContext = createContext();
-
 const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("user"))

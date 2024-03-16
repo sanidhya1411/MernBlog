@@ -1,6 +1,6 @@
 const { Router } = require('express')
 
-const { registerUser, loginUser, getUser, editUser, getAuthors, changeAvatar,forgotPassword } = require('../controllers/userControllers')
+const { registerUser, loginUser, getUser, editUser, getAuthors, changeAvatar,ResetPassword,ForgotPassword } = require('../controllers/userControllers')
 const authMiddleware = require('../middleware/authMiddleware')
 
 const router = Router()
@@ -12,6 +12,7 @@ router.get('/:id', getUser)
 router.get('/', getAuthors)
 router.post('/change-avatar',authMiddleware,changeAvatar)
 router.patch('/edit-user', authMiddleware, editUser)
-router.patch('/forgotPassword',forgotPassword)
+router.post('/forgotPassword',ForgotPassword)
+router.patch('/resetPassword/:token',ResetPassword)
 
 module.exports = router

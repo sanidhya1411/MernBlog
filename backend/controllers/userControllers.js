@@ -3,9 +3,6 @@ const User = require('../models/userModel')
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
 require('dotenv').config()
-const fs = require('fs')
-const path = require('path')
-const { v4: uuid } = require('uuid')
 const cloudinary = require('cloudinary').v2
 const nodemailer=require('nodemailer')
 
@@ -178,20 +175,69 @@ const getAuthors = async (req, res, next) => {
     }
 }
 
-const forgotPassword = async (req, res, next) => {
-    try {
-        const {email, password, password2 } = req.body;
+const ForgotPassword = async (req, res, next)=>{
+    const { email } = req.body
+    
+    if (!email) {
+        return next(new HttpError("Fill in all fields.", 422));
+    }
+    const newEmail = email.toLowerCase();
+    const user = await User.findOne({ email: newEmail });
 
-        if (!email) {
+    if (!user) {
+        return next(new HttpError("User doesn't exist.", 422));
+    }
+    const { _id: id} = user
+    const ptoken = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '10m' })
+
+    try{
+        let transporter = nodemailer.createTransport({
+            host:process.env.MAIL_HOST,
+            port: 587,
+            auth:{
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            }
+        })
+
+
+        let info = await transporter.sendMail({ 
+            from: `${process.env.MAIL_USER}`,
+            to:`${email}`,
+            subject: `Reset Password`,
+            html: `<h1>Reset Your Password</h1>
+            <p>Click on the following link to reset your password:</p>
+            <a href="http://localhost:3000/reset-password/${ptoken}">http://localhost:3000/reset-password/${ptoken}</a>
+            <p>The link will expire in 10 minutes.</p>
+            <p>If you didn't request a password reset, please ignore this email.</p>`,
+        })
+        res.status(200).json("Mail sent")
+
+    }
+    catch (error) {
+        return next(new HttpError("Link Cannot be sent.", 500));
+    }
+}
+
+const ResetPassword = async (req, res, next) => {
+    try {
+
+        const ptoken = req.params.token
+        const { password, password2 } = req.body;
+
+        const decodedToken = jwt.verify(
+            ptoken,
+            process.env.JWT_SECRET
+        );
+        
+        if (!decodedToken) {
+            return next(new HttpError('Unauthorized. Invalid token',403))
+          }
+
+        if (!password || !password2) {
             return next(new HttpError("Fill in all fields.", 422));
         }
 
-        const newEmail = email.toLowerCase();
-        const user = await User.findOne({ email: newEmail });
-
-        if (!user) {
-            return next(new HttpError("Email doesn't exist.", 422));
-        }
 
         if ((password.trim()).length < 6) {
             return next(new HttpError("Password should contain at least 6 characters.", 422));
@@ -201,16 +247,17 @@ const forgotPassword = async (req, res, next) => {
             return next(new HttpError("Passwords do not match.", 422));
         }
 
+        const id = decodedToken.id
+
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(password, salt);
-        const newInfo = await User.findByIdAndUpdate(user.id, { password: hashedPass }, { new: true })
+        const newInfo = await User.findByIdAndUpdate(id, { password: hashedPass }, { new: true })
         res.status(200).json(newInfo)
 
     } catch (error) {
-        console.error(error);
         return next(new HttpError("User Password can't be updated.", 500));
     }
 };
 
-module.exports = { registerUser, loginUser, getUser, editUser, getAuthors, changeAvatar, forgotPassword }
+module.exports = { registerUser, loginUser, getUser, editUser, getAuthors, changeAvatar, ResetPassword ,ForgotPassword}
     

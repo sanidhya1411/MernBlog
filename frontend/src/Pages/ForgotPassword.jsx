@@ -2,26 +2,37 @@ import React from 'react'
 import { useState,useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { toast} from 'react-toastify';
 
 
 const ForgotPassword = () => {
 
   const [userData, setUserData] = useState({
     email: '',
-    password: '',
-    password2: ''
   })
 
-  const navigate = useNavigate()
 
-  const [error, setError] = useState("")
+  const [error, setError] = useState(false)
 
   const ForgotUser = async (e) => {
     e.preventDefault()
     setError('')
     try {
-      const response = await axios.patch(`https://mernblog-ypmi.onrender.com/api/users/forgotPassword`, userData)
-      navigate('/login')
+
+      const res = await axios.post(`http://localhost:5000/api/users/forgotPassword`, userData)
+
+      if (res.status==200) {
+        toast.info('Please check your mail', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      }
 
     }
     catch (err) {
@@ -38,12 +49,10 @@ const ForgotPassword = () => {
   return (
     <section className='login'>
       <div className="container">
-        <h2>Reset Password</h2>
+        <h2>Forgot Password</h2>
         <form className='form login_form' onSubmit={ForgotUser}>
           {error && <p className="form_error-message">{error}</p>}
           <input type="email" placeholder='Email' name='email' value={userData.email} onChange={changeInputHandler} />
-          <input type="password" placeholder='Password' name='password' value={userData.password} onChange={changeInputHandler} />
-          <input type="password" placeholder='Confirm Password' name='password2' value={userData.password2} onChange={changeInputHandler} />
           <button className='btn primary'>Submit</button>
         </form>
       </div>

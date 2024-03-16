@@ -28,7 +28,7 @@ const Dashboard = () => {
     const fetchPosts = async () => {
       setIsLoading(true)
       try {
-        const response = await axios.get(`https://mernblog-ypmi.onrender.com/api/posts/users/${id}`,{withCredentials:true,headers:{Authorization:`Bearer ${token}`}})
+        const response = await axios.get(`http://localhost:5000/api/posts/users/${id}`,{withCredentials:true,headers:{Authorization:`Bearer ${token}`}})
         setPosts(response.data)
       }
       catch (error) {

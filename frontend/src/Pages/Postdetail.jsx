@@ -21,7 +21,7 @@ const Postdetail = () => {
     const getPost = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`https://mernblog-ypmi.onrender.com/api/posts/${id}`)
+        const response = await axios.get(`http://localhost:5000/api/posts/${id}`)
 
         setPost(response.data)
       }

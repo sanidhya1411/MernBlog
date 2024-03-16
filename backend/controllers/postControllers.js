@@ -110,8 +110,8 @@ const editPost = async (req, res, next) => {
                 }
                
                 const { thumbnail } = req.files;
-                if (thumbnail.size > 2000000) {
-                    return next(new HttpError("Thumbnail too big. should be less than 2mb."))
+                if (thumbnail.size > 3000000) {
+                    return next(new HttpError("Thumbnail too big. should be less than 3mb."))
                 }
                 const response = await cloudinary.uploader.upload(thumbnail.tempFilePath, { folder: 'sanidhya' }, async (err) => {
                     if (err) {
