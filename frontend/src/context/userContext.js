@@ -1,12 +1,9 @@
-import { createContext, useState, useEffect, useRef } from "react";
+import { createContext, useState, useEffect } from "react";
 
 export const UserContext = createContext();
 const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("user"))
-  );
 
-  const intervalIdRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")));
 
   useEffect(() => {
     const saveUserToLocalStorage = () => {
@@ -15,15 +12,16 @@ const UserProvider = ({ children }) => {
 
     saveUserToLocalStorage();
 
-    if (currentUser) {
-      intervalIdRef.current = setInterval(() => {
-        localStorage.removeItem("user");
-        console.log("User data removed from localStorage");
-      }, 24 * 60 * 60 * 1000);
+    if (currentUser && currentUser.expiryDate) {
+      const currentTime = new Date().getTime();
+      const expiryTime = new Date(currentUser.expiryDate).getTime();
 
-      return () => clearInterval(intervalIdRef.current);
-    } else {
-      clearInterval(intervalIdRef.current);
+      if (currentTime > expiryTime) {
+        // Remove user data from localStorage
+        localStorage.removeItem("user");
+        setCurrentUser(null);
+        console.log("User data removed from localStorage");
+      }
     }
   }, [currentUser]);
 

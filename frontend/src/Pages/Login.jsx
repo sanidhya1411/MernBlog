@@ -46,6 +46,7 @@ const Login = () => {
           <button className='btn primary'>Login</button>
         </form>
         <small>Don't have an account?<Link to='/register'> Sign Up</Link></small>
+        <small><Link to='/verify'>Verify Email</Link></small>
         <small><Link to='/forgot-password'>Forgot Password</Link></small>
       </div>
     </section>

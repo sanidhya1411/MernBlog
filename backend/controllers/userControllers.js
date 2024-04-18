@@ -23,6 +23,8 @@ const registerUser = async (req, res, next) => {
             return next(new HttpError("Email already exists.", 422));
         }
 
+
+
         // Check if password meets the minimum length requirement
         if ((password.trim()).length < 6) {
             return next(new HttpError("Password should contain at least 6 characters.", 422));
@@ -60,6 +62,9 @@ const loginUser = async (req, res, next) => {
         if (!user) {
             return next(new HttpError("Invalid credentials.",422))
         }
+        if (!user.verified) {
+            return next(new HttpError("Please Verify Your Mail.",422))
+        }
 
         const comparePass = await bcrypt.compare(password,user.password)
         if (!comparePass) {
@@ -68,7 +73,11 @@ const loginUser = async (req, res, next) => {
         
         const { _id: id, name } = user
         const token = jwt.sign({ id, name }, process.env.JWT_SECRET, { expiresIn: '1d' })
-        res.status(200).json({token,id,name})
+
+        const expiresIn = 4 * 60 * 60
+        const expiryDate = new Date(Date.now() + expiresIn * 1000)
+
+        res.status(200).json({token,id,name,expiryDate})
     }
     catch (error) {
         return next(new HttpError("User registration failed.",422))
@@ -175,6 +184,73 @@ const getAuthors = async (req, res, next) => {
     }
 }
 
+const verifyMail = async (req, res, next) => {
+    const { email } = req.body
+    
+    if (!email) {
+        return next(new HttpError("Fill in all fields.", 422));
+    }
+    const newEmail = email.toLowerCase();
+    const user = await User.findOne({ email: newEmail });
+
+    if (!user) {
+        return next(new HttpError("User doesn't exist.", 422));
+    }
+    const { _id: id } = user
+    const ptoken = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '10m' })
+
+    try {
+        let transporter = nodemailer.createTransport({
+            host: process.env.MAIL_HOST,
+            port: 587,
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS,
+            }
+        })
+
+
+        let info = await transporter.sendMail({
+            from: `${process.env.MAIL_USER}`,
+            to: `${email}`,
+            subject: `Verify Mail`,
+            html: `<h1>Verify your mail</h1>
+            <p>Click on the following link to verify your mail:</p>
+            <a href="http://localhost:3000/verified/${ptoken}">http://localhost:3000/verified/${ptoken}</a>
+            <p>The link will expire in 10 minutes.</p>`,
+        })
+        res.status(200).json("Mail sent")
+
+    }
+    catch (error) {
+        return next(new HttpError("Link Cannot be sent.", 500));
+    }
+};
+
+const verifiedMail = async (req, res, next) => {
+    try {
+
+        const ptoken = req.params.token
+
+        const decodedToken = jwt.verify(
+            ptoken,
+            process.env.JWT_SECRET
+        );
+        
+        if (!decodedToken) {
+            return next(new HttpError('Unauthorized. Invalid token',403))
+        }
+
+        const id = decodedToken.id
+
+        const newInfo = await User.findByIdAndUpdate(id, { verified: 1 }, { new: true })
+        res.status(200).json(newInfo)
+
+    } catch (error) {
+        return next(new HttpError("Cann't verify the Mail.", 500));
+    }
+};
+
 const ForgotPassword = async (req, res, next)=>{
     const { email } = req.body
     
@@ -259,5 +335,5 @@ const ResetPassword = async (req, res, next) => {
     }
 };
 
-module.exports = { registerUser, loginUser, getUser, editUser, getAuthors, changeAvatar, ResetPassword ,ForgotPassword}
+module.exports = { registerUser, loginUser, getUser, editUser, getAuthors, changeAvatar, ResetPassword ,ForgotPassword,verifyMail,verifiedMail}
     

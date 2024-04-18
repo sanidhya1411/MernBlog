@@ -5,7 +5,7 @@ import axios from 'axios'
 import { toast} from 'react-toastify';
 
 
-const ForgotPassword = () => {
+const Verify = () => {
 
   const [userData, setUserData] = useState({
     email: '',
@@ -19,7 +19,7 @@ const ForgotPassword = () => {
     setError('')
     try {
 
-      const response = await axios.post(`http://localhost:5000/api/users/forgotPassword`, userData)
+      const response = await axios.post(`http://localhost:5000/api/users/verify`, userData)
 
       if (response.status==200) {
         toast.info('Please check your mail', {
@@ -49,7 +49,7 @@ const ForgotPassword = () => {
   return (
     <section className='login'>
       <div className="container">
-        <h2>Forgot Password</h2>
+        <h2>Verify Email</h2>
         <form className='form login_form' onSubmit={ForgotUser}>
           {error && <p className="form_error-message">{error}</p>}
           <input type="email" placeholder='Email' name='email' value={userData.email} onChange={changeInputHandler} />
@@ -60,4 +60,4 @@ const ForgotPassword = () => {
   )
 }
 
-export default ForgotPassword
+export default Verify

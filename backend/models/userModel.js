@@ -5,6 +5,7 @@ const userSchema = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     avatar: { type: String },
+    verified:{ type: Number, default: 0 },
     posts: { type: Number, default: 0 }
 })
 module.exports = model('User', userSchema)
