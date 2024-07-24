@@ -17,7 +17,7 @@ const createPost = async (req, res, next) => {
             return next(new HttpError("Thumbnail too big. File should be less than 2mb."))
         }
 
-        const response = await cloudinary.uploader.upload(thumbnail.tempFilePath, { folder: 'sanidhya' }, async (err) => {
+        const response = await cloudinary.uploader.upload(thumbnail.tempFilePath, { folder: 'sanidhya', quality:"70", }, async (err) => {
             if (err) {
                 return next(new HttpError(err))
             }
@@ -113,7 +113,7 @@ const editPost = async (req, res, next) => {
                 if (thumbnail.size > 3000000) {
                     return next(new HttpError("Thumbnail too big. should be less than 3mb."))
                 }
-                const response = await cloudinary.uploader.upload(thumbnail.tempFilePath, { folder: 'sanidhya' }, async (err) => {
+                const response = await cloudinary.uploader.upload(thumbnail.tempFilePath, { folder: 'sanidhya', quality:"70", }, async (err) => {
                     if (err) {
                         return next(new HttpError(err))
                     }

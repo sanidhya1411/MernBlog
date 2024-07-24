@@ -43,7 +43,7 @@ const Logout = lazy(() => import("./Pages/Logout"));
 const ForgotPassword = lazy(() => import("./Pages/ForgotPassword"));
 const Verify = lazy(() => import("./Pages/Verify"));
 const Verified = lazy(() => import("./Pages/Verified"));
-const ResetPassword = lazy(() => import("./Pages/Resetpassword"));
+const ResetPassword = lazy(() => import("./Pages/ResetPassword"));
 
 
 

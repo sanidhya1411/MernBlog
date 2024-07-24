@@ -120,7 +120,7 @@ const changeAvatar = async (req, res, next) => {
             return next(new HttpError("Profile picture too big. Should be less than 500kb"),422)
         }
 
-        const response = await cloudinary.uploader.upload(avatar.tempFilePath, { folder: 'sanidhya' }, async (err) => {
+        const response = await cloudinary.uploader.upload(avatar.tempFilePath, { folder: 'sanidhya', quality:"70"}, async (err) => {
             if (err) {
                 return next(new HttpError(err))
             }
